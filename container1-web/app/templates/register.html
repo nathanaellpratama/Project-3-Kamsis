@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-container" id="register-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-icon">&#128100;</span>
+            <h1>Register</h1>
+            <p>Buat akun baru</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" class="auth-form" id="register-form">
+            <!-- CSRF Token -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="username">Username <span class="required">*</span></label>
+                <input type="text" 
+                       id="username" 
+                       name="username" 
+                       required 
+                       maxlength="50"
+                       pattern="[a-zA-Z0-9_]+"
+                       value="{{ username|default('') }}"
+                       placeholder="Huruf, angka, underscore (max 50)">
+                <small class="form-hint">Hanya huruf, angka, dan underscore</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       required 
+                       maxlength="120"
+                       value="{{ email|default('') }}"
+                       placeholder="email@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Nama Lengkap</label>
+                <input type="text" 
+                       id="full_name" 
+                       name="full_name" 
+                       maxlength="100"
+                       value="{{ full_name|default('') }}"
+                       placeholder="Nama lengkap Anda (opsional)">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       required 
+                       minlength="8"
+                       maxlength="128"
+                       placeholder="Minimal 8 karakter">
+                <small class="form-hint">Minimal 8, maksimal 128 karakter</small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Konfirmasi Password <span class="required">*</span></label>
+                <input type="password" 
+                       id="confirm_password" 
+                       name="confirm_password" 
+                       required 
+                       maxlength="128"
+                       placeholder="Ulangi password">
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-register">
+                &#128100; Register
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Sudah punya akun? <a href="{{ url_for('auth.login') }}">Login</a></p>
+        </div>
+
+        <div class="security-badge">
+            <small>&#128737; Input divalidasi untuk mencegah SQL Injection, XSS, dan Buffer Overflow</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

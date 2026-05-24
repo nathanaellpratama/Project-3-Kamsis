@@ -1,0 +1,35 @@
+# Environment & Secrets
+.env
+
+# SSL Certificates
+container1-web/certs/*.pem
+container1-web/certs/*.key
+container1-web/certs/*.crt
+
+# Snort Logs
+container2-snort/logs/*
+!container2-snort/logs/.gitkeep
+
+# PostgreSQL Data
+pg_data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

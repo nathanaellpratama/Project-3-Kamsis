@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # ============================================
+  # Container 1: Web Application + PostgreSQL DB
+  # Proteksi: HTTPS, Hash+Salt, SQL Injection,
+  #           XSS, Buffer Overflow
+  # ============================================
+  web:
+    build: ./container1-web
+    container_name: secure-web
+    hostname: secure-web
+    networks:
+      security_net:
+        ipv4_address: 10.10.10.10
+    environment:
+      - DATABASE_URL=postgresql://app_user:${DB_PASSWORD}@127.0.0.1:5432/secure_app
+      - SECRET_KEY=${SECRET_KEY}
+      - FLASK_ENV=production
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./container1-web/certs:/etc/nginx/certs
+    restart: unless-stopped
+
+  # ============================================
+  # Container 2: Snort 3 IDS/IPS + ACL Firewall
+  # Mode: Hybrid (IDS alert + IPS blocking)
+  # Rules: Local + Community + Custom
+  # ============================================
+  snort:
+    build: ./container2-snort
+    container_name: snort-ids-ips
+    hostname: snort-ids-ips
+    networks:
+      security_net:
+        ipv4_address: 10.10.10.20
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_NICE
+    privileged: true
+    volumes:
+      - ./container2-snort/rules:/etc/snort/rules
+      - ./container2-snort/logs:/var/log/snort
+      - ./container2-snort/config:/etc/snort/config
+    sysctls:
+      - net.ipv4.ip_forward=1
+    restart: unless-stopped
+
+  # ============================================
+  # Container 3: User / Attacker Client
+  # Base: Kali Linux Rolling
+  # Tools: curl, nmap, hping3, sqlmap, nikto
+  # ============================================
+  user:
+    build: ./container3-user
+    container_name: user-client
+    hostname: user-client
+    networks:
+      security_net:
+        ipv4_address: 10.10.10.30
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    depends_on:
+      - snort
+      - web
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+# ============================================
+# Network Configuration
+# ============================================
+networks:
+  security_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
+          gateway: 10.10.10.1
+
+# ============================================
+# Persistent Volumes
+# ============================================
+volumes:
+  pg_data:
+    driver: local

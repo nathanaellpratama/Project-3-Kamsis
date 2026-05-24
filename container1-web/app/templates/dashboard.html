@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container" id="dashboard-page">
+    <div class="dashboard-header">
+        <h1>&#128202; Dashboard</h1>
+        <p>Selamat datang, <strong>{{ current_user.username }}</strong>!</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+        <form action="{{ url_for('main.search') }}" method="GET" id="search-form">
+            <input type="text" 
+                   name="q" 
+                   id="search-input"
+                   placeholder="Cari pesan..." 
+                   maxlength="100"
+                   value="{{ search_query|default('') }}">
+            <button type="submit" class="btn btn-secondary" id="btn-search">&#128269; Cari</button>
+        </form>
+    </div>
+
+    {% if search_query %}
+    <div class="search-result-info">
+        <!-- Jinja2 auto-escaping prevents XSS in search query display -->
+        <p>Hasil pencarian untuk: <strong>{{ search_query }}</strong></p>
+    </div>
+    {% endif %}
+
+    <!-- New Message Form -->
+    {% if show_form is defined and show_form %}
+    <div class="message-form-card" id="message-form">
+        <h2>&#9993; Kirim Pesan Baru</h2>
+        <form method="POST" action="{{ url_for('main.messages') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label for="title">Judul</label>
+                <input type="text" 
+                       id="title" 
+                       name="title" 
+                       required 
+                       maxlength="200"
+                       placeholder="Judul pesan (max 200 karakter)">
+            </div>
+
+            <div class="form-group">
+                <label for="content">Konten</label>
+                <textarea id="content" 
+                          name="content" 
+                          required 
+                          maxlength="2000"
+                          rows="4"
+                          placeholder="Isi pesan (max 2000 karakter)"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-send">&#9993; Kirim</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Messages List -->
+    <div class="messages-list" id="messages-list">
+        <h2>&#128172; Pesan Terbaru</h2>
+        {% if messages %}
+            {% for msg in messages %}
+            <div class="message-card">
+                <div class="message-header">
+                    <!-- Jinja2 auto-escaping: all output is HTML-escaped by default -->
+                    <strong>{{ msg.title }}</strong>
+                    <span class="message-meta">
+                        oleh {{ msg.author.username }} | 
+                        {{ msg.created_at.strftime('%d/%m/%Y %H:%M') }}
+                    </span>
+                </div>
+                <div class="message-body">
+                    <!-- Auto-escaped: prevents stored XSS -->
+                    {{ msg.content }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>Belum ada pesan.</p>
+                {% if not show_form %}
+                <a href="{{ url_for('main.messages') }}" class="btn btn-secondary">&#9993; Buat Pesan</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Security Info Panel -->
+    <div class="security-panel">
+        <h3>&#128737; Proteksi Aktif</h3>
+        <ul>
+            <li>&#9989; HTTPS/TLS Encryption</li>
+            <li>&#9989; Hash + Salt Password (PBKDF2-SHA256)</li>
+            <li>&#9989; SQL Injection Prevention (SQLAlchemy ORM)</li>
+            <li>&#9989; XSS Prevention (Jinja2 Auto-Escape + CSP)</li>
+            <li>&#9989; Buffer Overflow Protection (Input Limits)</li>
+            <li>&#9989; CSRF Protection (Token-based)</li>
+            <li>&#9989; Rate Limiting</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

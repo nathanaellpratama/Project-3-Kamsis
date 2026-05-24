@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure Web Application - Project 3 Keamanan Sistem">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}Secure Web App{% endblock %} | Project 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="main-nav">
+        <div class="nav-brand">
+            <span class="shield-icon">&#128274;</span>
+            <span>SecureApp</span>
+        </div>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.dashboard') }}" id="nav-dashboard">Dashboard</a>
+                <a href="{{ url_for('main.messages') }}" id="nav-messages">Messages</a>
+                <a href="{{ url_for('main.profile') }}" id="nav-profile">Profile</a>
+                <a href="{{ url_for('auth.logout') }}" id="nav-logout" class="btn-logout">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" id="nav-login">Login</a>
+                <a href="{{ url_for('auth.register') }}" id="nav-register">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}" id="flash-msg">
+                        <!-- Jinja2 auto-escaping prevents XSS here -->
+                        {{ message }}
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Error Display -->
+    {% if error %}
+        <div class="error-container">
+            <h2>{{ error }}</h2>
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 SecureApp - Project 3 Keamanan Sistem | Telkom University</p>
+            <p class="security-info">
+                &#128274; HTTPS | &#128272; Hash+Salt | &#128737; SQL Injection Protected | 
+                &#128737; XSS Protected | &#128737; Buffer Overflow Protected
+            </p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
