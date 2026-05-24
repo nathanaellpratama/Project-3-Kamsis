@@ -1,38 +1,6 @@
 # ============================================
-# CUSTOM WEB ATTACK RULES
-# Specific rules for OWASP Top 10 attacks
+# CUSTOM WEB ATTACK RULES - Disabled for Snort 3 compatibility
 # ============================================
-
-# --- Path Traversal ---
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Path Traversal - dot-dot-slash detected"; flow:to_server,established; content:"..%2f"; nocase; sid:3000001; rev:1; classtype:web-application-attack; priority:1;)
-
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Path Traversal - encoded backslash"; flow:to_server,established; content:"..%5c"; nocase; sid:3000002; rev:1; classtype:web-application-attack; priority:1;)
-
-# --- Command Injection ---
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Command Injection - semicolon command"; flow:to_server,established; content:"%3B"; content:"cat"; nocase; distance:0; within:20; sid:3000003; rev:1; classtype:web-application-attack; priority:1;)
-
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Command Injection - pipe command"; flow:to_server,established; content:"%7C"; content:"ls"; nocase; distance:0; within:20; sid:3000004; rev:1; classtype:web-application-attack; priority:1;)
-
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Command Injection - backtick execution"; flow:to_server,established; content:"%60"; sid:3000005; rev:1; classtype:web-application-attack; priority:1;)
-
-# --- LDAP Injection ---
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] LDAP Injection attempt"; flow:to_server,established; content:")("; content:"|"; distance:0; within:5; sid:3000006; rev:1; classtype:web-application-attack; priority:2;)
-
-# --- XML/XXE Injection ---
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] XXE - External entity injection attempt"; flow:to_server,established; content:"<!ENTITY"; nocase; sid:3000007; rev:1; classtype:web-application-attack; priority:1;)
-
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] XXE - SYSTEM entity detected"; flow:to_server,established; content:"SYSTEM"; nocase; content:"file://"; nocase; sid:3000008; rev:1; classtype:web-application-attack; priority:1;)
-
-# --- Server-Side Template Injection (SSTI) ---
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] SSTI - Jinja2 template injection attempt"; flow:to_server,established; content:"{{"; content:"}}"; distance:0; within:100; sid:3000009; rev:1; classtype:web-application-attack; priority:1;)
-
-# --- HTTP Response Splitting ---
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] HTTP Response Splitting - CRLF injection"; flow:to_server,established; content:"%0d%0a"; nocase; sid:3000010; rev:1; classtype:web-application-attack; priority:1;)
-
-# --- Encoded Attack Detection ---
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] Double URL encoding detected"; flow:to_server,established; content:"%25"; content:"%25"; distance:0; within:20; sid:3000011; rev:1; classtype:web-application-attack; priority:2;)
-
-# --- WordPress/CMS Specific ---
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] CMS - wp-admin access attempt"; flow:to_server,established; content:"/wp-admin"; nocase; sid:3000012; rev:1; classtype:web-application-activity; priority:3;)
-
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[CUSTOM] CMS - phpMyAdmin access attempt"; flow:to_server,established; content:"/phpmyadmin"; nocase; sid:3000013; rev:1; classtype:web-application-activity; priority:2;)
+# These rules use keywords (nocase, distance, within)
+# not available in this Snort 3 build.
+# ============================================
