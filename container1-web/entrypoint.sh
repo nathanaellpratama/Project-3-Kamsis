@@ -17,7 +17,7 @@ echo "[DB] Initializing PostgreSQL..."
 su - postgres -c "pg_ctlcluster 15 main start" 2>/dev/null || \
 su - postgres -c "pg_ctlcluster 14 main start" 2>/dev/null || {
     # Fallback: initialize and start manually
-    PG_VERSION=$(ls /usr/lib/postgresql/ | head -1)
+    export PG_VERSION=$(ls /usr/lib/postgresql/ | head -1)
     PG_DATA="/var/lib/postgresql/${PG_VERSION}/main"
     
     if [ ! -f "$PG_DATA/PG_VERSION" ]; then
@@ -55,4 +55,5 @@ echo "[DB] Database initialization complete."
 
 # ---- Start Supervisord (Nginx + Gunicorn) ----
 echo "[APP] Starting application services..."
+export PG_VERSION=$(ls /usr/lib/postgresql/ | head -1)
 exec "$@"

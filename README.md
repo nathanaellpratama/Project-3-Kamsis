@@ -184,11 +184,24 @@ Output yang diharapkan menunjukkan `secure-web`, `snort-ids-ips`, dan `user-clie
 Untuk melihat keefektifan Snort 3 IPS (blocking) dan respon web server, sangat disarankan menggunakan **dua jendela terminal terpisah** di Kali Linux Anda:
 
 ### TERMINAL A: Memantau Alerts Secara Real-Time (Snort)
-Buka terminal baru di Kali Linux, kemudian jalankan script monitoring di container Snort untuk memantau paket yang dicurigai atau diblokir:
+Buka terminal baru di Kali Linux, kemudian Anda bisa memilih menggunakan menu interaktif atau perintah manual untuk memantau paket yang dicurigai atau diblokir:
+
+**Opsi 1: Menggunakan Menu Interaktif**
 ```bash
 docker exec -it snort-ids-ips /opt/scripts/monitor.sh
 ```
-Pilih opsi **`1`** untuk menampilkan semua alert secara real-time. Biarkan terminal ini tetap terbuka.
+Pilih opsi **`1`** untuk menampilkan semua alert secara real-time.
+
+**Opsi 2: Menggunakan Perintah Manual (sysadmin style)**
+Jika dosen meminta Anda mengetik perintah monitoring sendiri, masuk dulu ke dalam shell container:
+```bash
+docker exec -it snort-ids-ips bash
+```
+Lalu ketikkan perintah `tail` (mengikuti output log di belakang file secara langsung):
+```bash
+tail -f /var/log/snort/alert_fast.txt
+```
+*(Biarkan terminal ini tetap terbuka dan menggantung untuk melihat serangan masuk).*
 
 ### TERMINAL B: Menjalankan Serangan (Attacker/User)
 Kembali ke terminal utama Kali Linux Anda, kemudian masuk ke shell interaktif container User (Kali Linux):
@@ -212,7 +225,30 @@ Anda akan disuguhkan menu interaktif seperti berikut:
   6) Test Buffer Overflow
   7) Run ALL Tests
 
-  UTILITIES:
+### TERMINAL B (Alternatif): Pengujian Manual via Command Line
+Jika dosen meminta Anda untuk mengetikkan perintah serangan secara manual (tanpa menu interaktif), Anda dapat masuk ke shell Linux di container penyerang:
+```bash
+docker exec -it user-client bash
+```
+*(Prompt Anda akan berubah menjadi `root@user-client:/opt#`)*
+
+**Contoh 1: Tes Akses Normal (ICMP Ping)**
+Kirim 4 paket ping biasa ke Web Server:
+```bash
+ping -c 4 10.10.10.10
+```
+*   **Ekspektasi di Terminal B:** Ping berhasil dan mendapat *reply*.
+*   **Ekspektasi di Terminal A:** Muncul alert `[LOCAL] ICMP - Ping to web server detected`.
+
+**Contoh 2: Serangan DoS (ICMP Ping Flood)**
+Kirim ribuan ping secara simultan menggunakan `hping3` untuk membanjiri jaringan:
+```bash
+hping3 --icmp --flood 10.10.10.10
+```
+*   **Ekspektasi di Terminal B:** Terminal akan terus mengirim paket (Tekan `Ctrl+C` untuk berhenti). Statusnya 100% *packet loss* karena langsung di-drop.
+*   **Ekspektasi di Terminal A:** Muncul alert merah `[LOCAL] DoS - ICMP flood detected` berulang-ulang, dan paket langsung di-DROP oleh IPS.
+
+---  UTILITIES:
   8) Ping Web Server
   9) Check Web Server Status
   0) Exit

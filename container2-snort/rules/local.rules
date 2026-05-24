@@ -82,10 +82,10 @@ alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] XSS - alert() function 
 # ==========================================
 
 # Detect nmap SYN scan
-alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - Nmap SYN scan detected"; flags:S; threshold:type threshold,track by_src,count 20,seconds 5; sid:1000021; rev:1; classtype:attempted-recon; priority:2;)
+alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - Nmap SYN scan detected"; flags:S; sid:1000021; rev:1; classtype:attempted-recon; priority:2;)
 
 # Detect nmap FIN scan
-alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - FIN scan detected"; flags:F; threshold:type threshold,track by_src,count 10,seconds 5; sid:1000022; rev:1; classtype:attempted-recon; priority:2;)
+alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - FIN scan detected"; flags:F; sid:1000022; rev:1; classtype:attempted-recon; priority:2;)
 
 # Detect nmap XMAS scan
 alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - XMAS scan detected"; flags:FPU; sid:1000023; rev:1; classtype:attempted-recon; priority:2;)
@@ -100,20 +100,20 @@ alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] Recon - Nmap HTTP scan 
 drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] Recon - Nikto scanner detected"; flow:to_server,established; content:"Nikto"; nocase; sid:1000026; rev:1; classtype:web-application-attack; priority:1;)
 
 # Detect rapid connection attempts (port sweep)
-alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - Rapid connection attempts"; flags:S; threshold:type both,track by_src,count 50,seconds 10; sid:1000027; rev:1; classtype:attempted-recon; priority:1;)
+alert tcp any any -> $HOME_NET any (msg:"[LOCAL] Port Scan - Rapid connection attempts"; flags:S; sid:1000027; rev:1; classtype:attempted-recon; priority:1;)
 
 # ==========================================
 # DoS / DDoS DETECTION (sid:1000031-1000040)
 # ==========================================
 
 # Detect SYN flood
-drop tcp any any -> $HOME_NET any (msg:"[LOCAL] DoS - SYN flood detected"; flags:S; threshold:type threshold,track by_src,count 100,seconds 10; sid:1000031; rev:1; classtype:attempted-dos; priority:1;)
+drop tcp any any -> $HOME_NET any (msg:"[LOCAL] DoS - SYN flood detected"; flags:S; sid:1000031; rev:1; classtype:attempted-dos; priority:1;)
 
 # Detect HTTP flood
-drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] DoS - HTTP flood detected"; flow:to_server,established; threshold:type threshold,track by_src,count 50,seconds 5; sid:1000032; rev:1; classtype:attempted-dos; priority:1;)
+drop tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] DoS - HTTP flood detected"; flow:to_server,established; sid:1000032; rev:1; classtype:attempted-dos; priority:1;)
 
 # Detect ICMP flood
-drop icmp any any -> $HOME_NET any (msg:"[LOCAL] DoS - ICMP flood detected"; threshold:type threshold,track by_src,count 50,seconds 10; sid:1000033; rev:1; classtype:attempted-dos; priority:1;)
+drop icmp any any -> $HOME_NET any (msg:"[LOCAL] DoS - ICMP flood detected"; sid:1000033; rev:1; classtype:attempted-dos; priority:1;)
 
 # Detect large ICMP packet (ping of death attempt)
 drop icmp any any -> $HOME_NET any (msg:"[LOCAL] DoS - Large ICMP packet (Ping of Death)"; dsize:>1000; sid:1000034; rev:1; classtype:attempted-dos; priority:1;)
@@ -136,7 +136,7 @@ alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] Buffer Overflow - Large
 # ==========================================
 
 # Detect login brute force
-alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] Brute Force - Multiple login attempts"; flow:to_server,established; content:"POST"; depth:4; content:"/login"; content:"username"; threshold:type threshold,track by_src,count 10,seconds 60; sid:1000051; rev:1; classtype:attempted-admin; priority:1;)
+alert tcp any any -> $HOME_NET $HTTP_PORTS (msg:"[LOCAL] Brute Force - Multiple login attempts"; flow:to_server,established; content:"POST"; depth:4; content:"/login"; content:"username"; sid:1000051; rev:1; classtype:attempted-admin; priority:1;)
 
 # ==========================================
 # GENERAL / ICMP (sid:1000061-1000070)

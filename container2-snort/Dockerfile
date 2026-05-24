@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpcap-dev \
-    libpcre3-dev \
+    libpcre2-dev \
     libnet1-dev \
     zlib1g-dev \
     luajit \
@@ -31,9 +31,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libnetfilter-queue-dev \
     libmnl-dev \
     autotools-dev \
+    autoconf \
+    automake \
+    libtool \
+    ca-certificates \
     libluajit-5.1-dev \
     libunwind-dev \
     libfl-dev \
+    libdnet-dev \
+    libtirpc-dev \
+    libgoogle-perftools-dev \
     git \
     wget \
     curl \
@@ -56,9 +63,10 @@ RUN git clone https://github.com/snort3/libdaq.git && \
     ldconfig
 
 # Install Snort 3
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH
 RUN git clone https://github.com/snort3/snort3.git && \
     cd snort3 && \
-    ./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc && \
+    ./configure_cmake.sh --prefix=/usr/local && \
     cd build && \
     make -j$(nproc) && \
     make install && \
