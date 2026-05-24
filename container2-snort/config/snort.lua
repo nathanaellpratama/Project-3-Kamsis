@@ -90,7 +90,7 @@ stream_icmp = { }
 
 -- Fast alert output to file
 alert_fast = {
-    file = true,
+    file = false,
     packet = false,
 }
 
