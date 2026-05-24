@@ -63,11 +63,11 @@ ips = {
     mode = 'inline',
     enable_builtin_rules = true,
     variables = {
-        nets = {
+        net = {
             HOME_NET = HOME_NET,
             EXTERNAL_NET = EXTERNAL_NET,
         },
-        ports = {
+        port = {
             HTTP_PORTS = HTTP_PORTS,
             SSH_PORTS = SSH_PORTS,
         }
