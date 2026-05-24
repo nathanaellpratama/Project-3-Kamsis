@@ -4,7 +4,6 @@
 -- Project 3 - Keamanan Sistem
 ---------------------------------------------------------------------------
 
-include '/etc/snort/config/snort_defaults.lua'
 
 -- ========================================
 -- 1. NETWORK VARIABLES
@@ -23,6 +22,8 @@ SSH_SERVERS = '$HOME_NET'
 -- Port lists
 HTTP_PORTS = '80 443 8080'
 SSH_PORTS = '22'
+
+include '/etc/snort/config/snort_defaults.lua'
 
 -- ========================================
 -- 2. PATH VARIABLES
