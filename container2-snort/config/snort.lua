@@ -49,10 +49,9 @@ daq = {
 -- ========================================
 -- 4. DETECTION ENGINE
 -- ========================================
-search_engine = { search_method = 'hyperscan' }
+-- search_engine = { search_method = 'hyperscan' }
 
 detection = {
-    hyperscan_literals = true,
     pcre_match_limit = 3500,
     pcre_match_limit_recursion = 1500,
 }
@@ -63,7 +62,16 @@ detection = {
 ips = {
     mode = 'inline',
     enable_builtin_rules = true,
-    variables = default_variables,
+    variables = {
+        nets = {
+            HOME_NET = HOME_NET,
+            EXTERNAL_NET = EXTERNAL_NET,
+        },
+        ports = {
+            HTTP_PORTS = HTTP_PORTS,
+            SSH_PORTS = SSH_PORTS,
+        }
+    },
     rules = [[
         include /etc/snort/rules/local.rules
         include /etc/snort/rules/community.rules
@@ -112,7 +120,6 @@ stream_icmp = { }
 port_scan = {
     protos = 'all',
     scan_types = 'all',
-    sense_level = 'low',
     watch_ip = [[
         10.10.10.30/32
     ]],
