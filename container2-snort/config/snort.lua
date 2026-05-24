@@ -4,6 +4,8 @@
 -- Project 3 - Keamanan Sistem
 ---------------------------------------------------------------------------
 
+include '/etc/snort/config/snort_defaults.lua'
+
 -- ========================================
 -- 1. NETWORK VARIABLES
 -- ========================================
@@ -62,16 +64,7 @@ detection = {
 ips = {
     mode = 'inline',
     enable_builtin_rules = true,
-    variables = {
-        net = {
-            HOME_NET = HOME_NET,
-            EXTERNAL_NET = EXTERNAL_NET,
-        },
-        port = {
-            HTTP_PORTS = HTTP_PORTS,
-            SSH_PORTS = SSH_PORTS,
-        }
-    },
+    variables = default_variables,
     rules = [[
         include /etc/snort/rules/local.rules
         include /etc/snort/rules/community.rules
